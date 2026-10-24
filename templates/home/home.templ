@@ -1,0 +1,9 @@
+package home
+
+import "github.com/nedpranson/the-christmas-breach/templates/base"
+
+templ Home() {
+    @base.Layout(base.LayoutProps{ Title: "The Christmas Breach" }) {
+        <h1>Hello World!</h1>
+    }
+}
