@@ -2,5 +2,6 @@
 *_templ.go
 
 # project related local files
+/data
 /node_modules
 /public/assets/css
