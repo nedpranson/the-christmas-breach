@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+@source "../../templates";
+
+@custom-variant hx-indicator (&.htmx-request, .htmx-request &);
+@custom-variant hx-added (&.htmx-added, .htmx-added &);
+@custom-variant hx-swapping (&.htmx-swapping, .htmx-swapping &);

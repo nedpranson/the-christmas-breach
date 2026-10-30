@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/nedpranson/the-christmas-breach/core/public"
 	"github.com/nedpranson/the-christmas-breach/handlers/home"
 )
 
@@ -16,6 +17,8 @@ func main() {
 	slog.SetDefault(logger)
 
 	mux := http.NewServeMux()
+
+	mux.Handle("/", public.NewFileServer())
 
 	mux.HandleFunc("GET /{$}", home.Home)
 
