@@ -10,6 +10,7 @@ import (
 
 	"github.com/nedpranson/the-christmas-breach/core/db"
 	"github.com/nedpranson/the-christmas-breach/core/public"
+	"github.com/nedpranson/the-christmas-breach/handlers/auth"
 	"github.com/nedpranson/the-christmas-breach/handlers/home"
 )
 
@@ -40,6 +41,7 @@ func run() int {
 	mux.Handle("/", public.NewFileServer())
 
 	mux.HandleFunc("GET /{$}", home.Home)
+	mux.HandleFunc("GET /log-in", auth.LogIn)
 
 	srv := &http.Server{
 		Addr:    ":8080",

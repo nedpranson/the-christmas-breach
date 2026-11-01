@@ -1,0 +1,46 @@
+package auth
+
+import "github.com/nedpranson/the-christmas-breach/templates/base"
+
+templ LogIn() {
+    @base.Layout(base.LayoutProps{
+        Title: "Log In - The Christmas Breach",
+    }) {
+        <p class="mb-4">
+            You need to log in to save your progress. If you don't have an account yet, select Register below.
+        </p>
+        <form method="POST" class="space-y-2">
+            <label class="flex items-center before:mr-2 before:content-['['] after:ml-2 after:content-[']']">
+                <input
+                    type="text"
+                    name="username"
+                    autocomplete="username"
+                    placeholder="Username"
+                    class="outline-none"
+                    required
+                />
+            </label>
+            <label class="flex items-center before:mr-2 before:content-['['] after:ml-2 after:content-[']']">
+                <input
+                    type="password"
+                    name="password"
+                    autocomplete="current-password"
+                    placeholder="Password"
+                    class="outline-none"
+                    required
+                />
+            </label>
+            <label class="mt-4 flex w-max cursor-pointer items-center text-xs">
+                <input type="checkbox" class="peer sr-only" checked />
+                <span class="mr-2 font-semibold text-foreground/50 before:content-['[_]'] peer-checked:text-primary peer-checked:before:content-['[x]'] peer-focus-visible:text-foreground peer-checked:peer-focus-visible:text-selection-primary"></span>
+                <span class="text-foreground/50 peer-checked:text-foreground">Stay logged in</span>
+            </label>
+            <button
+                type="submit"
+                class="mt-4 cursor-pointer bg-primary text-background outline-none hover:bg-selection-primary focus:bg-selection-primary"
+            >
+                [ Submit ]
+            </button>
+        </form>
+    }
+}

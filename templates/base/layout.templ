@@ -21,14 +21,11 @@ templ Layout(props LayoutProps) {
 			/>
 			<link href="/assets/css/global.css" rel="stylesheet"/>
 		</head>
-		<body class="bg-background text-foreground space-y-6">
+		<body class="space-y-6 bg-background text-foreground">
 			<script>/* prevents firefox from force loading html */</script>
             @Header()
-			<main
-				if props.Class != "" {
-					class={ props.Class }
-				}
-			>
+            // tood: use twMerge
+			<main class={ "px-8 " + props.Class } >
 				{ children... }
 			</main>
 		</body>
