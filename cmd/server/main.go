@@ -42,7 +42,7 @@ func run() int {
 	mux.HandleFunc("GET /{$}", home.Home)
 
 	srv := &http.Server{
-		Addr:    ":3000",
+		Addr:    ":8080",
 		Handler: mux,
 	}
 

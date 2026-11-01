@@ -34,8 +34,10 @@
 
     --color-foreground: #d4be98;
     --color-background: #282828;
-    --color-selection-foreground: #d4be98;
+    --color-primary: #98971a;
+    --color-selection-foreground: #fbf1c7;
     --color-selection-background: #504945;
+    --color-selection-primary: #b8bb26;
 }
 
 @custom-variant hx-indicator (&.htmx-request, .htmx-request &);

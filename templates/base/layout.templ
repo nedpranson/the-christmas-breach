@@ -21,8 +21,9 @@ templ Layout(props LayoutProps) {
 			/>
 			<link href="/assets/css/global.css" rel="stylesheet"/>
 		</head>
-		<body>
+		<body class="bg-background text-foreground space-y-6">
 			<script>/* prevents firefox from force loading html */</script>
+            @Header()
 			<main
 				if props.Class != "" {
 					class={ props.Class }

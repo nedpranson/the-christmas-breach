@@ -14,12 +14,12 @@ type ErrorProps struct {
 templ Error(props ErrorProps) {
 	@Layout(LayoutProps{
 		Title: fmt.Sprintf("%d - %s", props.Status, http.StatusText(props.Status)),
-		Class: "flex flex-col items-center bg-stone-100 text-center",
+		Class: "flex flex-col items-center text-center",
 	}) {
-        <h1 class="mt-24 bg-[repeating-linear-gradient(45deg,var(--color-gray-400)_0px,var(--color-gray-400)_10px,var(--color-gray-300)_10px,var(--color-gray-300)_20px)] bg-clip-text text-[12rem] leading-none font-bold text-transparent">
+        <h1 class="mt-24 bg-[repeating-linear-gradient(45deg,#a89984_0px,#a89984_10px,#928374_10px,#928374_20px)] bg-clip-text text-[12rem] leading-none font-bold text-transparent">
             { strconv.Itoa(props.Status) }
         </h1>
-        <p class="max-w-md text-lg text-stone-700">
+        <p class="max-w-md text-lg">
             { props.Message }
         </p>
 	}
