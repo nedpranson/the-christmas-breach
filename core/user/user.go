@@ -13,7 +13,7 @@ import (
 )
 
 type User struct {
-	ID 		        int64
+	ID              int64
 	Username        string
 	Seed            int64
 	CompletedLevels uint16
@@ -34,9 +34,9 @@ func Create(ctx context.Context, p *CreateUserParams) (*User, error) {
 	}
 
 	user, err := db.GetQueries().CreateUser(ctx, db.CreateUserParams{
-		Username: p.Username,
+		Username:     p.Username,
 		PasswordHash: string(hash),
-		Seed: int64(seed),
+		Seed:         int64(seed),
 	})
 
 	if err != nil {
@@ -44,7 +44,7 @@ func Create(ctx context.Context, p *CreateUserParams) (*User, error) {
 	}
 
 	return &User{
-		ID:				 user.ID,
+		ID:              user.ID,
 		Username:        user.Username,
 		Seed:            user.Seed,
 		CompletedLevels: uint16(user.CompletedLevels),
@@ -82,6 +82,10 @@ func FromCredentials(ctx context.Context, creds *Credentials) (*User, error) {
 
 func FromSession(ctx context.Context, session string) (*User, error) {
 	user, err := db.GetQueries().GetUserFromSession(ctx, session)
+	if err == sql.ErrNoRows {
+		return nil, ErrInvalidSession
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -100,8 +104,8 @@ func (u *User) CreateSesion(ctx context.Context) (db.Session, error) {
 	token := hex.EncodeToString(bytes)
 
 	session, err := db.GetQueries().CreateSession(ctx, db.CreateSessionParams{
-		Token: token,
-		UserID: u.ID,
+		Token:     token,
+		UserID:    u.ID,
 		ExpiresAt: time.Now().AddDate(0, 0, 14), // 2 weeks
 	})
 

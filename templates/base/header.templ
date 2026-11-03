@@ -1,22 +1,44 @@
 package base
 
+import "github.com/nedpranson/the-christmas-breach/core/user"
+
 templ Header() {
-    <nav class="flex justify-between border-b px-8 py-3">
-        <div>
-            <a 
+    {{ p := user.FromContext(ctx) }}
+    <nav class="text-primary flex justify-between gap-2 border-b border-foreground px-8 py-3">
+        <div class="shrink-0">
+            <a
                 href="/"
-                class="text-primary outline-none hover:text-selection-primary focus:text-selection-primary"
+                class="outline-none hover:text-selection-primary focus:text-selection-primary"
             >
                 [ The Christmas Breach ]
             </a>
         </div>
-        <div>
-            <a
-                href="/log-in"
-                class="text-primary outline-none hover:text-selection-primary focus:text-selection-primary"
-            >
-                [ Log In ]
-            </a>
+        <div class="flex min-w-0 gap-2">
+            if p == nil {
+                <a
+                    href="/log-in"
+                    class="shrink-0 outline-none hover:text-selection-primary focus:text-selection-primary"
+                >
+                    [ Log In ]
+                </a>
+            } else {
+                <div
+                    class="flex min-w-0"
+                    title={ p.Username }
+                >
+                    <span class="shrink-0">[&nbsp;</span>
+                    <span class="min-w-0 truncate">{ p.Username }</span>
+                    <span class="shrink-0">&nbsp;]</span>
+                </div>
+                <form method="POST" action="/log-out" class="shrink-0">
+                    <button
+                        type="submit"
+                        class="cursor-pointer outline-none hover:text-selection-primary focus:text-selection-primary"
+                    >
+                        [ Log Out ]
+                    </button>
+                </form>
+            }
         </div>
     </nav>
 }

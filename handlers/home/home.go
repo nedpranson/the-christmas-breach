@@ -8,5 +8,5 @@ import (
 )
 
 func Home(w http.ResponseWriter, r *http.Request) {
-	view.Render(w, home_templ.Home());
+	view.Render(w, home_templ.Home(), r.Context())
 }

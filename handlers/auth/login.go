@@ -4,14 +4,15 @@ import (
 	"log/slog"
 	"net/http"
 
+	core_auth "github.com/nedpranson/the-christmas-breach/core/auth"
 	"github.com/nedpranson/the-christmas-breach/core/user"
 	"github.com/nedpranson/the-christmas-breach/core/util/view"
 	auth_templ "github.com/nedpranson/the-christmas-breach/templates/auth"
-	"github.com/nedpranson/the-christmas-breach/templates/base"
+	base_templ "github.com/nedpranson/the-christmas-breach/templates/base"
 )
 
 func LogIn(w http.ResponseWriter, r *http.Request) {
-	view.Render(w, auth_templ.LogIn());
+	view.Render(w, auth_templ.LogIn(), r.Context())
 }
 
 func LogInPost(w http.ResponseWriter, r *http.Request) {
@@ -20,10 +21,10 @@ func LogInPost(w http.ResponseWriter, r *http.Request) {
 	persistent := r.FormValue("persistent") != ""
 
 	if username == "" || password == "" {
-		view.Error(w, base.Error(base.ErrorProps{
+		view.Error(w, base_templ.Error(base_templ.ErrorProps{
 			Message: "Username and password are required.",
-			Status: http.StatusBadRequest,
-		}), http.StatusBadRequest)
+			Status:  http.StatusBadRequest,
+		}), r.Context(), http.StatusBadRequest)
 		return
 	}
 
@@ -34,20 +35,20 @@ func LogInPost(w http.ResponseWriter, r *http.Request) {
 
 	if err == user.ErrInvalidCredentials {
 		view.Error(w, auth_templ.LogIn(auth_templ.LogInProps{
-			Username: username,
+			Username:     username,
 			StayLoggedIn: persistent,
-			Error: "Invalid username or password.",
-		}), http.StatusUnauthorized);
+			Error:        "Invalid username or password.",
+		}), r.Context(), http.StatusUnauthorized)
 		return
 	}
 
 	if err != nil {
 		slog.Error("user::FromCredentials failed", "err", err)
 		view.Error(w, auth_templ.LogIn(auth_templ.LogInProps{
-			Username: username,
+			Username:     username,
 			StayLoggedIn: persistent,
-			Error: "Something broke on our end. Please try again later.",
-		}), http.StatusInternalServerError);
+			Error:        "Something broke on our end. Please try again later.",
+		}), r.Context(), http.StatusInternalServerError)
 		return
 	}
 
@@ -55,15 +56,15 @@ func LogInPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Error("user::CreateSesion failed", "err", err, "user", u)
 		view.Error(w, auth_templ.LogIn(auth_templ.LogInProps{
-			Username: username,
+			Username:     username,
 			StayLoggedIn: persistent,
-			Error: "Something broke on our end. Please try again later.",
-		}), http.StatusInternalServerError);
+			Error:        "Something broke on our end. Please try again later.",
+		}), r.Context(), http.StatusInternalServerError)
 		return
 	}
 
 	c := &http.Cookie{
-		Name:     "session",
+		Name:     core_auth.SessionCookie,
 		Value:    session.Token,
 		Path:     "/",
 		HttpOnly: true,
