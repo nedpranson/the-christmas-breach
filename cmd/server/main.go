@@ -45,6 +45,8 @@ func run() int {
 
 	mux.HandleFunc("GET /{$}", home.Home)
 	mux.HandleFunc("GET /log-in", auth.LogIn)
+	mux.HandleFunc("GET /sign-up", auth.SignUp)
+
 	mux.HandleFunc("POST /log-in", auth.LogInPost)
 	mux.HandleFunc("POST /log-out", auth.LogOutPost)
 

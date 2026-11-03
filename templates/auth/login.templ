@@ -17,10 +17,15 @@ templ LogIn(props ...LogInProps) {
     }
     @base.Layout(base.LayoutProps{
         Title: "Log In - The Christmas Breach",
+        Class: "space-y-4",
     }) {
-        <p class="mb-4">
+        <p>
             You need to log in to save your progress. If you don't have an account yet, select Register below.
         </p>
+        <div class="border-b pb-2 space-x-2">
+            <a class="bg-primary text-background">[ 1. Log In ]</a>
+            <a href="/sign-up" class="outline-none hover:text-selection-foreground focus:text-selection-foreground">[ 2. Register ]</a>
+        </div>
         <form method="POST" class="group space-y-2">
             if p.Error != "" {
                 <p class="hidden text-[#ea6962] group-has-placeholder-shown:block">[!] { p.Error }</p>

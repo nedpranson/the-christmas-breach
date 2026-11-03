@@ -1,0 +1,79 @@
+package auth
+
+import "github.com/nedpranson/the-christmas-breach/templates/base"
+
+type SignUpProps struct {
+    Username     string
+    StayLoggedIn bool
+    Error        string
+}
+
+templ SignUp(props ...LogInProps) {
+	{{ var p LogInProps }}
+	if len (props) > 0 {
+		{{ p = props[0] }}
+	} else {
+        {{ p.StayLoggedIn = true }}
+    }
+    @base.Layout(base.LayoutProps{
+        Title: "Log In - The Christmas Breach",
+        Class: "space-y-4",
+    }) {
+        <p>
+            You need to log in to save your progress. If you don't have an account yet, select Register below.
+        </p>
+        <div class="border-b pb-2 space-x-2">
+            <a href="/log-in" class="outline-none hover:text-selection-foreground focus:text-selection-foreground">[ 2. Log In ]</a>
+            <a class="bg-primary text-background">[ 1. Register ]</a>
+        </div>
+        <form method="POST" class="group space-y-2">
+            if p.Error != "" {
+                <p class="hidden text-[#ea6962] group-has-placeholder-shown:block">[!] { p.Error }</p>
+            }
+            <label class="flex items-center before:mr-2 before:content-['['] after:ml-2 after:content-[']']">
+                <input
+                    type="text"
+                    name="username"
+                    if p.Username != "" {
+                        value={p.Username}
+                    }
+                    autocomplete="username"
+                    placeholder="Username"
+                    class="outline-none"
+                    required
+                />
+            </label>
+            <label class="flex items-center before:mr-2 before:content-['['] after:ml-2 after:content-[']']">
+                <input
+                    type="password"
+                    name="password"
+                    autocomplete="new-password"
+                    placeholder="Password"
+                    class="outline-none"
+                    required
+                />
+            </label>
+            <label class="flex items-center before:mr-2 before:content-['['] after:ml-2 after:content-[']']">
+                <input
+                    type="password"
+                    name="password-confirmation"
+                    autocomplete="new-password"
+                    placeholder="Retype Password"
+                    class="outline-none"
+                    required
+                />
+            </label>
+            <label class="mt-4 flex w-max cursor-pointer items-center text-xs">
+                <input type="checkbox" name="persistent" class="peer sr-only" checked?={p.StayLoggedIn} />
+                <span class="mr-2 font-semibold text-foreground/50 before:content-['[_]'] peer-checked:text-primary peer-checked:before:content-['[x]'] peer-focus-visible:text-foreground peer-checked:peer-focus-visible:text-selection-primary"></span>
+                <span class="text-foreground/50 peer-checked:text-foreground">Stay logged in</span>
+            </label>
+            <button
+                type="submit"
+                class="mt-4 cursor-pointer bg-primary text-background outline-none hover:bg-selection-primary focus:bg-selection-primary"
+            >
+                [ Submit ]
+            </button>
+        </form>
+    }
+}
