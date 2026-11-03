@@ -37,11 +37,14 @@ func run() int {
 		return 1
 	}
 
+	db.Init(conn)
+
 	mux := http.NewServeMux()
 	mux.Handle("/", public.NewFileServer())
 
 	mux.HandleFunc("GET /{$}", home.Home)
 	mux.HandleFunc("GET /log-in", auth.LogIn)
+	mux.HandleFunc("POST /log-in", auth.LogInPost)
 
 	srv := &http.Server{
 		Addr:    ":8080",

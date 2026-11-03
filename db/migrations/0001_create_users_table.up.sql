@@ -6,5 +6,5 @@ CREATE TABLE users (
     seed             INTEGER NOT NULL,
     completed_levels INTEGER NOT NULL DEFAULT 0
                      CHECK (completed_levels BETWEEN 0 AND 1023),
-    created_at       TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

@@ -3,7 +3,8 @@ TAILWIND_OUT := public/assets/css/global.css
 
 .PHONY: generate
 generate:
-	go run github.com/a-h/templ/cmd/templ@v0.3.1070 generate
+	go run github.com/a-h/templ/cmd/templ@v0.3.1100 generate
+	go run github.com/sqlc-dev/sqlc/cmd/sqlc@v1.31.1 generate
 
 .PHONY: frontend
 frontend:
@@ -19,4 +20,4 @@ watch-frontend:
 
 .PHONY: watch-backend
 watch-backend:
-	go run github.com/a-h/templ/cmd/templ@v0.3.1070 generate --watch --proxy=http://localhost:8080 --open-browser=false --cmd="go run -tags dev ./cmd/server"
+	go run github.com/a-h/templ/cmd/templ@v0.3.1100 generate --watch --proxy=http://localhost:8080 --open-browser=false --cmd="go run -tags dev ./cmd/server"

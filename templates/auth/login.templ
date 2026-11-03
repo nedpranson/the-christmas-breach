@@ -2,18 +2,36 @@ package auth
 
 import "github.com/nedpranson/the-christmas-breach/templates/base"
 
-templ LogIn() {
+type LogInProps struct {
+    Username     string
+    StayLoggedIn bool
+    Error        string
+}
+
+templ LogIn(props ...LogInProps) {
+	{{ var p LogInProps }}
+	if len (props) > 0 {
+		{{ p = props[0] }}
+	} else {
+        {{ p.StayLoggedIn = true }}
+    }
     @base.Layout(base.LayoutProps{
         Title: "Log In - The Christmas Breach",
     }) {
         <p class="mb-4">
             You need to log in to save your progress. If you don't have an account yet, select Register below.
         </p>
-        <form method="POST" class="space-y-2">
+        <form method="POST" class="group space-y-2">
+            if p.Error != "" {
+                <p class="hidden text-[#ea6962] group-has-placeholder-shown:block">[!] { p.Error }</p>
+            }
             <label class="flex items-center before:mr-2 before:content-['['] after:ml-2 after:content-[']']">
                 <input
                     type="text"
                     name="username"
+                    if p.Username != "" {
+                        value={p.Username}
+                    }
                     autocomplete="username"
                     placeholder="Username"
                     class="outline-none"
@@ -31,7 +49,7 @@ templ LogIn() {
                 />
             </label>
             <label class="mt-4 flex w-max cursor-pointer items-center text-xs">
-                <input type="checkbox" class="peer sr-only" checked />
+                <input type="checkbox" name="persistent" class="peer sr-only" checked?={p.StayLoggedIn} />
                 <span class="mr-2 font-semibold text-foreground/50 before:content-['[_]'] peer-checked:text-primary peer-checked:before:content-['[x]'] peer-focus-visible:text-foreground peer-checked:peer-focus-visible:text-selection-primary"></span>
                 <span class="text-foreground/50 peer-checked:text-foreground">Stay logged in</span>
             </label>
