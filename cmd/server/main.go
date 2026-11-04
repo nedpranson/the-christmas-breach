@@ -11,7 +11,6 @@ import (
 	core_auth "github.com/nedpranson/the-christmas-breach/core/auth"
 	"github.com/nedpranson/the-christmas-breach/core/db"
 	"github.com/nedpranson/the-christmas-breach/core/public"
-	"github.com/nedpranson/the-christmas-breach/core/ratelimit"
 	"github.com/nedpranson/the-christmas-breach/handlers/auth"
 	"github.com/nedpranson/the-christmas-breach/handlers/home"
 )
@@ -48,15 +47,9 @@ func run() int {
 	mux.HandleFunc("GET /log-in", auth.LogIn)
 	mux.HandleFunc("GET /sign-up", auth.SignUp)
 
-	mux.Handle(
-		"POST /log-in",
-		ratelimit.LogInRateLimitMiddleware(auth.LogInPost),
-	)
+	mux.HandleFunc("POST /log-in", auth.LogInPost)
 
-	mux.Handle(
-		"POST /sign-up",
-		ratelimit.SignUpRateLimitMiddleware(auth.SignUpPost),
-	)
+	mux.HandleFunc("POST /sign-up", auth.SignUpPost)
 
 	mux.HandleFunc("POST /log-out", auth.LogOutPost)
 

@@ -3,13 +3,18 @@ package auth
 import (
 	"log/slog"
 	"net/http"
+	"time"
 
+	"github.com/go-chi/httprate"
 	core_auth "github.com/nedpranson/the-christmas-breach/core/auth"
 	"github.com/nedpranson/the-christmas-breach/core/user"
+	"github.com/nedpranson/the-christmas-breach/core/util"
 	"github.com/nedpranson/the-christmas-breach/core/util/view"
 	auth_templ "github.com/nedpranson/the-christmas-breach/templates/auth"
 	base_templ "github.com/nedpranson/the-christmas-breach/templates/base"
 )
+
+var loginRateLimiter = httprate.NewRateLimiter(10, 30*time.Minute)
 
 func LogIn(w http.ResponseWriter, r *http.Request) {
 	view.Render(w, auth_templ.LogIn(), r.Context())
@@ -25,6 +30,15 @@ func LogInPost(w http.ResponseWriter, r *http.Request) {
 			Message: "Username and password are required.",
 			Status:  http.StatusBadRequest,
 		}), r.Context(), http.StatusBadRequest)
+		return
+	}
+
+	if loginRateLimiter.OnLimit(w, r, util.KeyByIP(r)) {
+		view.Error(w, auth_templ.LogIn(auth_templ.LogInProps{
+			Username:     username,
+			StayLoggedIn: persistent,
+			Error:        "Too many log in attempts. Please try again later.",
+		}), r.Context(), http.StatusTooManyRequests)
 		return
 	}
 

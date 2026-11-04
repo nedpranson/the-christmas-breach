@@ -1,6 +1,12 @@
 package util
 
-import "crypto/rand"
+import (
+	"crypto/rand"
+	"net"
+	"net/http"
+
+	"github.com/go-chi/httprate"
+)
 
 func CryptoRandomBytes(len int) []byte {
 	buf := make([]byte, len)
@@ -9,4 +15,12 @@ func CryptoRandomBytes(len int) []byte {
 		panic(err)
 	}
 	return buf
+}
+
+func KeyByIP(r *http.Request) string {
+	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		ip = r.RemoteAddr
+	}
+	return httprate.CanonicalizeIP(ip)
 }

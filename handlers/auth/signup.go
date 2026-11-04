@@ -3,13 +3,18 @@ package auth
 import (
 	"log/slog"
 	"net/http"
+	"time"
 
+	"github.com/go-chi/httprate"
 	core_auth "github.com/nedpranson/the-christmas-breach/core/auth"
 	"github.com/nedpranson/the-christmas-breach/core/user"
+	"github.com/nedpranson/the-christmas-breach/core/util"
 	"github.com/nedpranson/the-christmas-breach/core/util/view"
 	auth_templ "github.com/nedpranson/the-christmas-breach/templates/auth"
 	base_templ "github.com/nedpranson/the-christmas-breach/templates/base"
 )
+
+var signUpRateLimiter = httprate.NewRateLimiter(3, 30*time.Minute)
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
 	view.Render(w, auth_templ.SignUp(), r.Context())
@@ -47,9 +52,18 @@ func SignUpPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if signUpRateLimiter.OnLimit(w, r, util.KeyByIP(r)) {
+		view.Error(w, auth_templ.SignUp(auth_templ.SignUpProps{
+			Username:     username,
+			StayLoggedIn: persistent,
+			Error:        "Too many sign up attempts. Please try again later.",
+		}), r.Context(), http.StatusTooManyRequests)
+		return
+	}
+
 	u, err := user.Create(r.Context(), &user.CreateUserParams{
 		Username: username,
-		Pasword: password,
+		Pasword:  password,
 	})
 
 	if err == user.ErrInvalidUsername {
