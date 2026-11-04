@@ -9,7 +9,7 @@ import (
 
 func LogOutPost(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie(core_auth.SessionCookie)
-	if err != nil {
+	if err == nil {
 		if err := core_auth.DeleteSession(r.Context(), c.Value); err != nil {
 			slog.Error("core_auth::DeleteSession failed", "err", err)
 		}

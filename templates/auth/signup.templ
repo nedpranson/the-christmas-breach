@@ -8,8 +8,8 @@ type SignUpProps struct {
     Error        string
 }
 
-templ SignUp(props ...LogInProps) {
-	{{ var p LogInProps }}
+templ SignUp(props ...SignUpProps) {
+	{{ var p SignUpProps }}
 	if len (props) > 0 {
 		{{ p = props[0] }}
 	} else {
@@ -56,7 +56,7 @@ templ SignUp(props ...LogInProps) {
             <label class="flex items-center before:mr-2 before:content-['['] after:ml-2 after:content-[']']">
                 <input
                     type="password"
-                    name="password-confirmation"
+                    name="password-verify"
                     autocomplete="new-password"
                     placeholder="Retype Password"
                     class="outline-none"

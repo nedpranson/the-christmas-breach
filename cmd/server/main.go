@@ -11,6 +11,7 @@ import (
 	core_auth "github.com/nedpranson/the-christmas-breach/core/auth"
 	"github.com/nedpranson/the-christmas-breach/core/db"
 	"github.com/nedpranson/the-christmas-breach/core/public"
+	"github.com/nedpranson/the-christmas-breach/core/ratelimit"
 	"github.com/nedpranson/the-christmas-breach/handlers/auth"
 	"github.com/nedpranson/the-christmas-breach/handlers/home"
 )
@@ -47,12 +48,21 @@ func run() int {
 	mux.HandleFunc("GET /log-in", auth.LogIn)
 	mux.HandleFunc("GET /sign-up", auth.SignUp)
 
-	mux.HandleFunc("POST /log-in", auth.LogInPost)
+	mux.Handle(
+		"POST /log-in",
+		ratelimit.LogInRateLimitMiddleware(auth.LogInPost),
+	)
+
+	mux.Handle(
+		"POST /sign-up",
+		ratelimit.SignUpRateLimitMiddleware(auth.SignUpPost),
+	)
+
 	mux.HandleFunc("POST /log-out", auth.LogOutPost)
 
 	srv := &http.Server{
 		Addr:    ":8080",
-		Handler: core_auth.LoadUser(mux),
+		Handler: core_auth.LoadUserMiddleware(mux),
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)

@@ -9,7 +9,7 @@ import (
 
 const SessionCookie = "session"
 
-func LoadUser(next http.Handler) http.Handler {
+func LoadUserMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c, err := r.Cookie(SessionCookie)
 		if err != nil || c.Value == "" {

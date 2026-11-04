@@ -5,8 +5,11 @@ import (
 	"database/sql"
 	"encoding/binary"
 	"encoding/hex"
+	"errors"
+	"strings"
 	"time"
 
+	"github.com/mattn/go-sqlite3"
 	"github.com/nedpranson/the-christmas-breach/core/db"
 	"github.com/nedpranson/the-christmas-breach/core/util"
 	"golang.org/x/crypto/bcrypt"
@@ -25,7 +28,16 @@ type CreateUserParams struct {
 	Pasword  string
 }
 
+const (
+	MinUsernameLength = 1
+	MaxUsernameLength = 32
+)
+
 func Create(ctx context.Context, p *CreateUserParams) (*User, error) {
+	if err := ValidateUsername(p.Username); err != nil {
+		return nil, err
+	}
+
 	seed := binary.LittleEndian.Uint64(util.CryptoRandomBytes(8))
 	hash, err := bcrypt.GenerateFromPassword([]byte(p.Pasword), bcrypt.DefaultCost)
 
@@ -38,6 +50,12 @@ func Create(ctx context.Context, p *CreateUserParams) (*User, error) {
 		PasswordHash: string(hash),
 		Seed:         int64(seed),
 	})
+
+	if err, ok := errors.AsType[sqlite3.Error](err); ok {
+		if err.ExtendedCode == sqlite3.ErrConstraintUnique && strings.Contains(err.Error(), "users.username") {
+			return nil, ErrUsernameTaken
+		}
+	}
 
 	if err != nil {
 		return nil, err
@@ -118,4 +136,18 @@ func (u *User) CreateSesion(ctx context.Context) (db.Session, error) {
 
 func (u *User) IsLevelCompleted(level uint8) bool {
 	return (u.CompletedLevels & 0x3FF & (1 << (level - 1))) == 1
+}
+
+func ValidateUsername(username string) error {
+	if len(username) < MinUsernameLength || len(username) > MaxUsernameLength {
+		return ErrInvalidUsername
+	}
+
+	for i := 0; i < len(username); i++ {
+		if username[i] < '!' || username[i] > '~' {
+			return ErrInvalidUsername
+		}
+	}
+
+	return nil
 }
