@@ -14,10 +14,3 @@ DELETE FROM sessions WHERE token = ?;
 
 -- name: DeleteExpiredSessions :exec
 DELETE FROM sessions WHERE expires_at <= datetime('now');
-
--- name: GetMinSessionExpiry :one
-SELECT expires_at 
-FROM sessions 
-WHERE expires_at > datetime('now') 
-ORDER BY expires_at 
-LIMIT 1;

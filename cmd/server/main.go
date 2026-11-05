@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	core_auth "github.com/nedpranson/the-christmas-breach/core/auth"
 	"github.com/nedpranson/the-christmas-breach/core/db"
@@ -60,6 +62,23 @@ func run() int {
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+
+	go func() {
+		ticker := time.NewTicker(6 * time.Hour)
+		defer ticker.Stop()
+
+		for {
+			if err := core_auth.CleanupSessions(ctx); err != nil && !errors.Is(err, context.Canceled) {
+				slog.Error("auth::CleanupSessions failed", "err", err)
+			}
+
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+			}
+		}
+	}()
 
 	errCh := make(chan error, 1)
 	go func() {

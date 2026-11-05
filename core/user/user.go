@@ -124,7 +124,7 @@ func (u *User) CreateSesion(ctx context.Context) (db.Session, error) {
 	session, err := db.GetQueries().CreateSession(ctx, db.CreateSessionParams{
 		Token:     token,
 		UserID:    u.ID,
-		ExpiresAt: time.Now().AddDate(0, 0, 14), // 2 weeks
+		ExpiresAt: time.Now().UTC().AddDate(0, 0, 14), // 2 weeks
 	})
 
 	if err != nil {

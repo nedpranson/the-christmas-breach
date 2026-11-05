@@ -47,21 +47,6 @@ func (q *Queries) DeleteSession(ctx context.Context, token string) error {
 	return err
 }
 
-const getMinSessionExpiry = `-- name: GetMinSessionExpiry :one
-SELECT expires_at 
-FROM sessions 
-WHERE expires_at > datetime('now') 
-ORDER BY expires_at 
-LIMIT 1
-`
-
-func (q *Queries) GetMinSessionExpiry(ctx context.Context) (time.Time, error) {
-	row := q.db.QueryRowContext(ctx, getMinSessionExpiry)
-	var expires_at time.Time
-	err := row.Scan(&expires_at)
-	return expires_at, err
-}
-
 const getUserFromSession = `-- name: GetUserFromSession :one
 SELECT u.id, u.username, u.password_hash, u.seed, u.completed_levels, u.created_at
 FROM sessions s
