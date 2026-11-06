@@ -2,6 +2,8 @@ package user
 
 import (
 	"context"
+	"crypto/hmac"
+	"crypto/sha256"
 	"database/sql"
 	"encoding/binary"
 	"encoding/hex"
@@ -136,6 +138,16 @@ func (u *User) CreateSesion(ctx context.Context) (db.Session, error) {
 
 func (u *User) IsLevelCompleted(level uint8) bool {
 	return (u.CompletedLevels & 0x3FF & (1 << (level - 1))) == 1
+}
+
+func (u *User) GenerateLevelPassword(level uint8) string {
+	var key [8]byte
+	binary.LittleEndian.PutUint64(key[:], uint64(u.Seed))
+
+	mac := hmac.New(sha256.New, key[:])
+	mac.Write([]byte{level})
+
+	return hex.EncodeToString(mac.Sum(nil))
 }
 
 func ValidateUsername(username string) error {

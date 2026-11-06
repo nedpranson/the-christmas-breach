@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/httprate"
+	twmerge "github.com/Oudwins/tailwind-merge-go"
 )
 
 func CryptoRandomBytes(len int) []byte {
@@ -16,6 +17,11 @@ func CryptoRandomBytes(len int) []byte {
 	}
 	return buf
 }
+
+func TwMerge(classes ...string) string {
+	return twmerge.Merge(classes...)
+}
+
 
 func KeyByIP(r *http.Request) string {
 	ip, _, err := net.SplitHostPort(r.RemoteAddr)

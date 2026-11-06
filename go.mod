@@ -3,6 +3,7 @@ module github.com/nedpranson/the-christmas-breach
 go 1.27.3
 
 require (
+	github.com/Oudwins/tailwind-merge-go v0.2.3
 	github.com/a-h/templ v0.3.1100
 	github.com/go-chi/httprate v0.16.1
 	github.com/golang-migrate/migrate/v4 v4.20.1
